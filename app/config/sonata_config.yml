@@ -1,0 +1,133 @@
+sonata_admin:
+    title:      Demo Project
+#    title_logo: /bundles/sonataadmin/logo_title.png
+    templates:
+        # default global templates
+        layout:  SonataAdminBundle::standard_layout.html.twig
+        ajax:    SonataAdminBundle::ajax_layout.html.twig
+
+        # default actions templates, should extend a global templates
+        list:    SonataAdminBundle:CRUD:list.html.twig
+        show:    SonataAdminBundle:CRUD:show.html.twig
+        edit:    SonataAdminBundle:CRUD:edit.html.twig
+#    dashboard:
+#        blocks:
+#            # display a dashboard block
+#            - { position: left, type: sonata.admin.block.admin_list }
+#
+#        groups:
+#            default: ~
+
+sonata_block:
+    default_contexts: [cms]
+    blocks:
+        sonata.admin.block.admin_list:
+            contexts:   [admin]
+
+        sonata.block.service.text:
+        sonata.block.service.action:
+        sonata.block.service.rss:
+
+sonata_notification:
+    backend: sonata.notification.backend.runtime
+
+sonata_seo:
+    default:          sonata.seo.page.default
+    title:            Demo Project
+    metas:
+        name:
+            keywords:             Demo Project
+            description:          Demo Project description
+            robots:               index, follow
+
+        property:
+            # Facebook application settings
+            #'fb:app_id':          XXXXXX
+            #'fb:admins':          admin1, admin2
+
+            # Open Graph information
+            # see http://developers.facebook.com/docs/opengraphprotocol/#types or http://ogp.me/
+            'og:site_name':       Demo Project Sandbox
+            'og:description':     A demo of the some rich bundles for your Symfony2 projects
+
+        http-equiv:
+            'Content-Type':         text/html; charset=utf-8
+            #'X-Ua-Compatible':      IE=EmulateIE7
+
+    head:
+        'xmlns':              http://www.w3.org/1999/xhtml
+        'xmlns:og':           http://opengraphprotocol.org/schema/
+        #'xmlns:fb':           "http://www.facebook.com/2008/fbml"
+
+sonata_page:
+    multisite: host
+    ignore_route_patterns:
+        - ^(.*)admin(.*)   # ignore admin route, ie route containing 'admin'
+        - ^_(.*)          # ignore symfony routes
+
+    ignore_routes:
+        - sonata_page_esi_cache
+        - sonata_page_js_sync_cache
+        - sonata_page_js_async_cache
+        - sonata_page_apc_cache
+
+    ignore_uri_patterns:
+        - ^/admin(.*)   # ignore admin route, ie route containing 'admin'
+
+    page_defaults:
+        homepage: {decorate: false} # disable decoration for homepage, key - is a page route
+
+    default_template: default # template key from templates section, used as default for pages
+    templates:
+        default: {path: 'SonataPageBundle::layout.html.twig', name: default }
+
+    # manage the http errors
+    catch_exceptions:
+        not_found: [404]    # render 404 page with "not_found" key (name generated: _page_internal_error_{key})
+        fatal:     [500]    # so you can use the same page for different http errors or specify specific page for each error
+
+sonata_media:
+    default_context: default
+    db_driver: doctrine_orm # or doctrine_mongodb
+    contexts:
+        default:  # the default context is mandatory
+            providers:
+                - sonata.media.provider.dailymotion
+                - sonata.media.provider.youtube
+                - sonata.media.provider.image
+                - sonata.media.provider.file
+
+            formats:
+                small: { width: 100 , quality: 70}
+                big:   { width: 500 , quality: 70}
+
+    cdn:
+        server:
+            path: /uploads/media # http://media.sonata-project.org/
+
+    filesystem:
+        local:
+            directory:  %kernel.root_dir%/../web/uploads/media
+            create:     false
+
+sonata_news:
+    title:        Demo Project
+    link:         http://sonata-project.org
+    description:  Cool bundles on top of Symfony2
+    salt:         'secureToken'
+    permalink_generator: sonata.news.permalink.date # sonata.news.permalink.category
+
+    comment:
+        notification:
+            emails:   [email@example.org, email2@example.org]
+            from:     no-reply@sonata-project.org
+            template: 'SonataNewsBundle:Mail:comment_notification.txt.twig'
+
+sonata_formatter:
+    formatters:
+        markdown:
+            service: sonata.formatter.text.markdown
+            extensions:
+                - sonata.formatter.twig.control_flow
+                - sonata.formatter.twig.gist
+                - sonata.media.formatter.twig
